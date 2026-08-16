@@ -9,6 +9,7 @@ import com.example.nexuspay.domain.usecase.GetUserUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -16,57 +17,53 @@ class HomeViewModel(
     private val transactionUseCase: GetTransactionUseCase
 ) : ViewModel() {
 
-    private var _user : MutableStateFlow<UserResponse?> = MutableStateFlow(null)
-    val user : StateFlow<UserResponse?> = _user
-    private var  _isUserLoading : MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isUserLoading : StateFlow<Boolean> = _isUserLoading
+    private var _userState =MutableStateFlow(UserState())
+    val userState = _userState.asStateFlow()
 
-    private var _userErrorMessage : MutableStateFlow<String?> = MutableStateFlow(null)
-    val userErrorMessage : StateFlow<String?> = _userErrorMessage
-
-    private var _transaction : MutableStateFlow<Map<String?, List<TransactionResponse>>?> =
-        MutableStateFlow(null)
-    val transaction : StateFlow<Map<String?, List<TransactionResponse>>?> = _transaction
-    private var _isTransactionLoading : MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isTransactionLoading : StateFlow<Boolean> = _isTransactionLoading
-
-    private var _transactionErrorMessage : MutableStateFlow<String?> = MutableStateFlow(null)
-    val transactionErrorMessage : StateFlow<String?> = _transactionErrorMessage
-
+    private var _transactionState =MutableStateFlow(TransactionState())
+    val transactionState = _transactionState.asStateFlow()
 
     fun loadUser(){
         viewModelScope.launch {
-            _isUserLoading.value = true
+            _userState.value = _userState.value.copy(isUserLoading = true)
             try {
                 val userResult = userUseCase.invoke()
                 if (userResult.isSuccess && userResult.getOrNull() != null) {
-                    _user.value = userResult.getOrNull()
+                    _userState.value = _userState.value.copy(user = userResult.getOrNull())
                 } else {
-                    _userErrorMessage.value = userResult.exceptionOrNull()?.localizedMessage
+                    _userState.value = _userState.value.copy(userErrorMessage = userResult.exceptionOrNull()?.localizedMessage)
+
                 }
             } catch (e: Throwable){
-                _userErrorMessage.value = e.localizedMessage ?: "Something went wrong please try again later"
+                _userState.value = _userState.value.copy(userErrorMessage = e.localizedMessage ?: "Something went wrong please try again later")
+
             } finally {
-                _isUserLoading.value = false
+                _userState.value = _userState.value.copy(isUserLoading = false)
             }
         }
     }
 
     fun loadTransaction(){
         viewModelScope.launch {
-            _isTransactionLoading.value = true
+            _transactionState.value = _transactionState.value.copy(isTransactionLoading = true)
             try {
                 val transactionResult = transactionUseCase.invoke()
 
                 if (transactionResult.isSuccess && transactionResult.getOrNull() != null) {
-                    _transaction.value = transactionResult.getOrNull()?.sortedByDescending { it.id }?.take(4)?.sortedByDescending{it.id}?.groupBy { it.date }
+                    _transactionState.value = _transactionState.value.copy(transaction =
+                        transactionResult.getOrNull()?.
+                        sortedByDescending { it.id }?.
+                        take(4)?.groupBy { it.date })
                 } else {
-                    _transactionErrorMessage.value = transactionResult.exceptionOrNull()?.localizedMessage
+                    _transactionState.value = _transactionState.value
+                        .copy(transactionErrorMessage = transactionResult.exceptionOrNull()?.localizedMessage)
                 }
             } catch (e: Throwable){
-                _transactionErrorMessage.value = e.localizedMessage ?: "Something went wrong please try again later"
+                _transactionState.value = _transactionState.value
+                    .copy(transactionErrorMessage =  e.localizedMessage ?: "Something went wrong please try again later")
+
             } finally {
-                _isTransactionLoading.value = false
+                _transactionState.value = _transactionState.value.copy(isTransactionLoading = false)
             }
         }
     }

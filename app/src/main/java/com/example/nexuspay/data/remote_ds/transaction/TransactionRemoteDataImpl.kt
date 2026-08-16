@@ -1,4 +1,4 @@
-package com.example.nexuspay.data.datasource.remote_ds.transaction
+package com.example.nexuspay.data.remote_ds.transaction
 
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
 import com.example.nexuspay.domain.model.request.TransactionRequest
@@ -13,7 +13,7 @@ import io.ktor.http.isSuccess
 
 class TransactionRemoteDataImpl(private val httpClient : HttpClient) : TransactionRemoteData {
 
-    override suspend fun transactionData() : Result<List<TransactionResponse>>{
+    override suspend fun getAllTransaction() : Result<List<TransactionResponse>>{
         try {
             val response = httpClient.get("transactions/${USER_IDENTIFIER}")
             val transactionResponse = response.body<List<TransactionResponse>>()
@@ -23,7 +23,7 @@ class TransactionRemoteDataImpl(private val httpClient : HttpClient) : Transacti
         }
     }
 
-    override suspend fun recentUserTransactionData(): Result<List<CurrentUserItem>> {
+    override suspend fun getAllUsers(): Result<List<CurrentUserItem>> {
         try {
             val response = httpClient.get("users")
             val recentUserResponse = response.body<List<CurrentUserItem>>()
@@ -33,7 +33,7 @@ class TransactionRemoteDataImpl(private val httpClient : HttpClient) : Transacti
         }
     }
 
-    override suspend fun requestTransaction(request: TransactionRequest): Result<Unit> {
+    override suspend fun sendRequest(request: TransactionRequest): Result<Unit> {
         return try {
 
             val response = httpClient.post("transactions/send") {

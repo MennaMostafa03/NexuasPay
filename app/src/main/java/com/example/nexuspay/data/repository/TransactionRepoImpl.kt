@@ -1,7 +1,7 @@
-package com.example.nexuspay.data.datasource.repository
+package com.example.nexuspay.data.repository
 
-import com.example.nexuspay.data.datasource.local_ds.transaction.TransactionLocalData
-import com.example.nexuspay.data.datasource.remote_ds.transaction.TransactionRemoteData
+import com.example.nexuspay.data.local_ds.transaction.TransactionLocalData
+import com.example.nexuspay.data.remote_ds.transaction.TransactionRemoteData
 import com.example.nexuspay.data.setup.connectivity.Connectivity
 import com.example.nexuspay.data.setup.toRequest
 import com.example.nexuspay.domain.model.request.TransactionEntity
@@ -13,30 +13,33 @@ import com.example.nexuspay.utils.exception.checkException
 import com.example.nexuspay.workmanager.ScheduleManager
 
 class TransactionRepoImpl(
-    private val transactionRemoteData: TransactionRemoteData,
-    private val transactionLocalData: TransactionLocalData,
+    private val remoteDB: TransactionRemoteData,
+    private val localDB: TransactionLocalData,
     private val scheduleManager: ScheduleManager,
     private val connect : Connectivity,
 ) : TransactionRepo {
 
-    override suspend fun transactionRepoData() : Result<List<TransactionResponse>> {
+    override suspend fun getAllTransactionRepo() : Result<List<TransactionResponse>> {
         if (connect.isOnline()){
-            val result = transactionRemoteData.transactionData()
+            // get transaction from api
+            val result = remoteDB.getAllTransaction()
             if(result.isSuccess && result.getOrNull() != null){
                 val response = result.getOrNull()!!
-                transactionLocalData.saveListOfTransaction(response)
+                // save transaction in DB
+                localDB.saveTransactionInDB(response)
                 return Result.success(response)
             } else {
                 return Result.failure(result.exceptionOrNull()!!)
             }
         } else {
-            val data = transactionLocalData.getListOfTransaction()
+            // get transaction from DB
+            val data = localDB.getTransactionFromDB()
             return Result.success(data)
         }
     }
 
-    override suspend fun currentTransactionRepo(): Result<List<CurrentUserItem>> {
-        val result = transactionRemoteData.recentUserTransactionData()
+    override suspend fun getAllUsersRepo(): Result<List<CurrentUserItem>> {
+        val result = remoteDB.getAllUsers()
         if(result.isSuccess && result.getOrNull() != null){
             val response = result.getOrNull()!!
             return Result.success(response)
@@ -45,43 +48,32 @@ class TransactionRepoImpl(
         }
     }
 
-    override suspend fun createTransactionRepo(entity: TransactionEntity): TransactionResult {
-
+    override suspend fun saveRequestRepo(entity: TransactionEntity): TransactionResult {
         val savedEntity =
-            transactionLocalData.addRequestTransaction(entity)
-
+            localDB.saveRequestInDB(entity)
         val result =
-            requestTransactionRepo(savedEntity)
-
+            sendRequestRepo(savedEntity)
         if (result == TransactionResult.Pending) {
             scheduleManager.scheduleRetry(savedEntity.id!!)
         }
-
         return result
     }
-
-    override suspend fun requestTransactionRepo(entity : TransactionEntity) : TransactionResult {
-
-        val result = transactionRemoteData.requestTransaction(entity.toRequest())
-
-
+    override suspend fun sendRequestRepo(entity : TransactionEntity) : TransactionResult {
+        val result = remoteDB.sendRequest(entity.toRequest())
         if (result.isSuccess && result.getOrNull() != null) {
-            transactionLocalData.deleteRequestTransaction(entity)
+            localDB.deleteRequestFromDB(entity)
             return TransactionResult.Success
         }
-
         val exception = result.exceptionOrNull()
-
         if (exception != null && checkException(exception)) {
             return TransactionResult.Pending
         } else {
-            transactionLocalData.deleteRequestTransaction(entity)
+            localDB.deleteRequestFromDB(entity)
             return TransactionResult.Failed
         }
     }
-
-    override suspend fun retryTransaction(id: Int) : TransactionResult {
-        val entity =  transactionLocalData.getRequestTransaction(id)
-        return  requestTransactionRepo(entity)
+    override suspend fun retrySendMoney(id: Int) : TransactionResult {
+        val entity =  localDB.getRequestByIdFromDB(id)
+        return  sendRequestRepo(entity)
     }
 }

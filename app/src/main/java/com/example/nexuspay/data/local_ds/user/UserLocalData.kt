@@ -1,4 +1,4 @@
-package com.example.nexuspay.data.datasource.local_ds.user
+package com.example.nexuspay.data.local_ds.user
 
 import com.example.nexuspay.domain.model.response.UserResponse
 import kotlinx.coroutines.flow.Flow

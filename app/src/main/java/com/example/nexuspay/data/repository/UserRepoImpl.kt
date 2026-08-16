@@ -1,21 +1,21 @@
-package com.example.nexuspay.data.datasource.repository
+package com.example.nexuspay.data.repository
 
-import com.example.nexuspay.data.datasource.local_ds.user.UserLocalData
-import com.example.nexuspay.data.datasource.remote_ds.user.UserRemoteData
+import com.example.nexuspay.data.local_ds.user.UserLocalData
+import com.example.nexuspay.data.remote_ds.user.UserRemoteData
 import com.example.nexuspay.data.setup.connectivity.Connectivity
 import com.example.nexuspay.domain.model.response.UserResponse
-import com.example.nexuspay.domain.repository.UserDataRepo
+import com.example.nexuspay.domain.repository.UserRepo
 import kotlinx.coroutines.flow.first
 
-class UserDataRepoImpl(
+class UserRepoImpl(
     private val userRemoteData: UserRemoteData,
     private val userLocalData: UserLocalData,
     private val connect : Connectivity,
-) : UserDataRepo {
+) : UserRepo {
 
-    override suspend fun userRepoData() : Result<UserResponse> {
+    override suspend fun getUserRepo() : Result<UserResponse> {
         if (connect.isOnline()){
-            val result = userRemoteData.userData()
+            val result = userRemoteData.getUser()
             if(result.isSuccess && result.getOrNull() != null){
                 val response = result.getOrNull()!!
                 userLocalData.saveUser(response)

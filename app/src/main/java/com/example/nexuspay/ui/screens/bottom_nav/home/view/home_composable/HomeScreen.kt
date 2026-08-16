@@ -46,25 +46,21 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen(navController: NavController){
     val viewModel = koinViewModel<HomeViewModel>()
-    val user by viewModel.user.collectAsState()
-    val transaction by viewModel.transaction.collectAsState()
-    val userLoading by viewModel.isUserLoading.collectAsState()
-    val transactionLoading by viewModel.isTransactionLoading.collectAsState()
-    val userErrorMessage by viewModel.userErrorMessage.collectAsState()
-    val transactionErrorMessage by viewModel.transactionErrorMessage.collectAsState()
+    val userState by viewModel.userState.collectAsState()
+    val transactionState by viewModel.transactionState.collectAsState()
 
     LaunchedEffect(Unit) { viewModel.loadData() }
 
     Column(Modifier.background(Color.Black.copy(0.9f)).fillMaxSize())
     {
         CustomTopAppBar(
-            title = user?.name ?: "",
+            title = userState.user?.name?: "",
             navigationIcon = {
-                if (userLoading) {
+                if (userState.isUserLoading) {
                     ShimmerCircle(size = 40.dp, modifier = Modifier.padding(horizontal = 10.dp))
                 } else {
                     AsyncImage(
-                        model = user?.avatar ?: "",
+                        model = userState.user?.avatar ?: "",
                         contentDescription = "",
                         modifier = Modifier
                             .padding(horizontal = 10.dp)
@@ -82,7 +78,7 @@ fun HomeScreen(navController: NavController){
                 )
                 Spacer(Modifier.width(10.dp))
             },
-            isLoading = transactionLoading
+            isLoading = transactionState.isTransactionLoading
         )
 
         Column(
@@ -91,7 +87,7 @@ fun HomeScreen(navController: NavController){
         )
         {
             when {
-                userLoading -> {
+                userState.isUserLoading -> {
                     ShimmerBox(
                         Modifier
                             .fillMaxWidth()
@@ -118,31 +114,31 @@ fun HomeScreen(navController: NavController){
                     Spacer(Modifier.height(28.dp))
                 }
 
-                userErrorMessage != null -> {
+                userState.userErrorMessage != null -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = userErrorMessage!!,
+                            text = userState.userErrorMessage!!,
                             style = AppTypography.displayLarge,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
 
-                user != null -> {
-                    Balance(user?.balance ?: 0, user?.currency)
+                userState.user != null -> {
+                    Balance(userState.user?.balance ?: 0, userState.user?.currency)
                     Spacer(Modifier.height(28.dp))
-                    SendButton(){
-                        navController.navigate(Routes.SendMoneyRoute(user?.avatar))
+                    SendButton{
+                        navController.navigate(Routes.SendMoneyRoute(userState.user?.avatar))
                     }
                     Spacer(Modifier.height(28.dp))
                 }
             }
             when {
-                transactionLoading -> {
+                transactionState.isTransactionLoading -> {
                     Row(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
@@ -165,22 +161,22 @@ fun HomeScreen(navController: NavController){
                     }
                 }
 
-                transactionErrorMessage != null -> {
+                transactionState.transactionErrorMessage != null -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = transactionErrorMessage!!,
+                            text = transactionState.transactionErrorMessage!!,
                             style = AppTypography.displayLarge,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
 
-                !transaction.isNullOrEmpty() -> {
-                    TransactionView(transaction)
+                !transactionState.transaction.isNullOrEmpty() -> {
+                    TransactionView(transactionState.transaction)
                 }
             }
         }

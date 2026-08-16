@@ -6,9 +6,9 @@ import com.example.nexuspay.domain.model.response.TransactionResponse
 import com.example.nexuspay.utils.exception.TransactionResult
 
 interface TransactionRepo {
-    suspend fun transactionRepoData() : Result<List<TransactionResponse>>
-    suspend fun currentTransactionRepo() :  Result<List<CurrentUserItem>>
-    suspend fun requestTransactionRepo(entity: TransactionEntity) : TransactionResult
-    suspend fun createTransactionRepo(entity: TransactionEntity) : TransactionResult
-    suspend fun retryTransaction(id : Int) : TransactionResult
+    suspend fun getAllTransactionRepo() : Result<List<TransactionResponse>>
+    suspend fun getAllUsersRepo() :  Result<List<CurrentUserItem>>
+    suspend fun sendRequestRepo(entity: TransactionEntity) : TransactionResult
+    suspend fun saveRequestRepo(entity: TransactionEntity) : TransactionResult
+    suspend fun retrySendMoney(id : Int) : TransactionResult
 }

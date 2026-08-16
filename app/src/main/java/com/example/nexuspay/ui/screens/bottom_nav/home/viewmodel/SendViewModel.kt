@@ -4,83 +4,47 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
 import com.example.nexuspay.domain.model.request.TransactionEntity
-import com.example.nexuspay.domain.model.response.CurrentUserItem
-import com.example.nexuspay.domain.usecase.CreateTransactionUseCase
-import com.example.nexuspay.domain.usecase.CurrentTransactionUseCase
+import com.example.nexuspay.domain.usecase.SaveRequestUseCase
+import com.example.nexuspay.domain.usecase.GetAllUserUseCase
 import com.example.nexuspay.utils.exception.TransactionResult
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SendViewModel(
-    private val currentTransactionUseCase: CurrentTransactionUseCase,
-    private val createTransactionUseCase: CreateTransactionUseCase
+    private val userUseCase: GetAllUserUseCase,
+    private val saveRequestUseCase: SaveRequestUseCase
 ) : ViewModel() {
 
-    private var _recentContact : MutableStateFlow<List<CurrentUserItem>?> = MutableStateFlow(emptyList())
-    val recentContact = _recentContact.asStateFlow()
-    private var _contactErrorMessage : MutableStateFlow<String?> = MutableStateFlow(null)
-    val contactErrorMessage  = _contactErrorMessage.asStateFlow()
+    private var _state = MutableStateFlow(SendMoneyState())
+    val state = _state.asStateFlow()
 
-    private var _isContactLoading : MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isContactLoading =  _isContactLoading.asStateFlow()
+    private val _message = MutableSharedFlow<String>()
+    val message = _message.asSharedFlow()
 
-
-    private var _isTransferLoading : MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isTransferLoading = _isTransferLoading.asStateFlow()
-    private var _message : MutableStateFlow<String?> = MutableStateFlow(null)
-    val message  = _message.asStateFlow()
-
-    private val _inputValue = MutableStateFlow("0.00")
-    val inputValue = _inputValue.asStateFlow()
-
-    private val _title = MutableStateFlow("")
-    val title = _title.asStateFlow()
-
-    private val _entity = MutableStateFlow(TransactionEntity())
-    val entity = _entity.asStateFlow()
-
-    fun loadRecentUser(){
+    fun loadUsers(){
         viewModelScope.launch{
-            _isContactLoading.value = true
+            _state.value = _state.value.copy(usersLoading = true)
             try {
-                val transactionResult = currentTransactionUseCase.invoke()
+                val transactionResult = userUseCase.invoke()
                 if (transactionResult.isSuccess && transactionResult.getOrNull() != null) {
-                    _recentContact.value = transactionResult.getOrNull()?.filter { it.identifier != USER_IDENTIFIER }
+                    transactionResult.getOrNull()
+                        ?.let { _state.value = _state.value.copy(users = it.filter { it -> it.identifier != USER_IDENTIFIER }) }
                 } else {
-                _contactErrorMessage.value = transactionResult.exceptionOrNull()?.localizedMessage
+                    _state.value = _state.value.copy(usersError = transactionResult.exceptionOrNull()?.localizedMessage)
                 }
             } catch (e: Throwable){
-                _contactErrorMessage.value = e.localizedMessage ?: "Something went wrong please try again later"
+                _state.value = _state.value.copy(usersError = e.localizedMessage ?: "Something went wrong please try again later")
             } finally {
-                _isContactLoading.value = false
+                _state.value = _state.value.copy(usersLoading = false)
             }
         }
-    }
-
-    fun transferTransaction(entity: TransactionEntity) {
-        viewModelScope.launch {
-            clearMessage()
-            _isTransferLoading.value = true
-
-            val transferResult = createTransactionUseCase.invoke(entity)
-
-            _isTransferLoading.value = false
-
-            _message.value = when (transferResult) {
-                TransactionResult.Pending -> "Your transfer is pending and will be processed automatically."
-                TransactionResult.Success -> "Transfer successful."
-                TransactionResult.Failed  -> "Transfer failed. Please check the transaction details."
-            }
-        }
-    }
-
-    fun clearMessage() {
-        _message.value = null
     }
 
     fun onKeyboardClick(symbol: Char) {
-        val current = _inputValue.value
+        val current = _state.value.inputValue
         val newValue = when {
             symbol.isDigit() -> {
                 if (current == "0.00") symbol.toString()
@@ -95,37 +59,67 @@ class SendViewModel(
             }
             else -> current
         }
-        _inputValue.value = newValue
-        val amountInCents = newValue.toDoubleOrNull()?.times(100)?.toInt() ?: 0
-        _entity.value = _entity.value.copy(amount = amountInCents)
+        _state.value = _state.value.copy(inputValue = newValue)
+        val amount = newValue.toDoubleOrNull()?.times(100)?.toInt() ?: 0
+        _state.value.entity = _state.value.entity.copy(amount = amount )
     }
 
     fun onRemoveClick() {
-        val current = _inputValue.value
+        val current = _state.value.inputValue
         if (current == "0.00") return
 
         val newValue = current.dropLast(1).ifEmpty { "0.00" }
-        _inputValue.value = newValue
+        _state.value = _state.value.copy(inputValue = newValue)
 
-        val amountInCents = newValue.toDoubleOrNull()?.times(100)?.toInt() ?: 0
-        _entity.value = _entity.value.copy(amount = amountInCents)
+        val amount = newValue.toDoubleOrNull()?.times(100)?.toInt() ?: 0
+        _state.value.entity = _state.value.entity.copy(amount = amount )
     }
 
-    fun onAmountChange(newTitle: String?) {
-        _title.value = newTitle ?: ""
-        _entity.value = _entity.value.copy(title = newTitle)
+    fun onValueChange(newTitle: String?) {
+        _state.value = _state.value.copy(title = newTitle?:"")
+
+        _state.value = _state.value.copy(
+            title = newTitle,
+            entity = _state.value.entity.copy(
+                title = newTitle
+            )
+        )
     }
 
     fun onContactSelected(identifier: String?) {
-        _entity.value = _entity.value.copy(receiverIdentifier = identifier)
+        _state.value.entity = _state.value.entity.copy(receiverIdentifier = identifier)
+
     }
 
+    // when i click on transfer button
     fun onTransferClick() {
-        viewModelScope.launch {
-            transferTransaction(_entity.value.copy(id = null))
-            _entity.value = TransactionEntity()
-            _inputValue.value = "0.00"
-            _title.value = ""
-        }
+        sendMoney(_state.value.entity.copy(id = null))
+        _state.value = _state.value.copy(
+            entity = TransactionEntity(),
+            inputValue = "0.00",
+            title = ""
+        )
+
+//            _entity.value = TransactionEntity()
+//            _inputValue.value = "0.00"
+//            _title.value = ""
     }
+    fun sendMoney(entity: TransactionEntity) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(requestLoading = true)
+            val transferResult = saveRequestUseCase.invoke(entity)
+            _state.value = _state.value.copy(requestLoading = false)
+
+            when (transferResult) {
+                TransactionResult.Pending ->
+                    _message.emit("Your transfer is pending and will be processed automatically.")
+
+                TransactionResult.Success ->
+                    _message.emit("Transfer successful.")
+
+                TransactionResult.Failed ->
+                    _message.emit("Transfer failed. Please check the transaction details.")
+            }        }
+    }
+
 }

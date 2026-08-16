@@ -2,6 +2,7 @@ package com.example.nexuspay.ui.routes
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class  Routes{
 
     @Serializable

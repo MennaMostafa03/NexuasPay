@@ -10,7 +10,7 @@ import com.example.nexuspay.domain.model.response.TransactionResponse
 interface TransactionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addListTransaction(transaction : List<TransactionResponse>)
+    suspend fun saveTransaction(transaction : List<TransactionResponse>)
 
     @Query("select * from  TransactionResponse ")
     suspend fun getAllTransaction() : List<TransactionResponse>

@@ -1,4 +1,4 @@
-package com.example.nexuspay.data.datasource.local_ds.user
+package com.example.nexuspay.data.local_ds.user
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

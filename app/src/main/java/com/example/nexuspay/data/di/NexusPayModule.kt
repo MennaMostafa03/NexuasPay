@@ -7,24 +7,24 @@ import com.example.nexuspay.data.setup.api.createHttpClient
 import com.example.nexuspay.data.setup.connectivity.Connectivity
 import com.example.nexuspay.data.setup.connectivity.ConnectivityImpl
 import com.example.nexuspay.data.setup.database.TransactionDataBase
-import com.example.nexuspay.data.datasource.repository.UserDataRepoImpl
-import com.example.nexuspay.data.datasource.local_ds.transaction.TransactionLocalData
-import com.example.nexuspay.data.datasource.local_ds.transaction.TransactionLocalDataImpl
-import com.example.nexuspay.data.datasource.local_ds.user.UserLocalData
-import com.example.nexuspay.data.datasource.local_ds.user.UserLocalDataImpl
-import com.example.nexuspay.data.datasource.remote_ds.transaction.TransactionRemoteData
-import com.example.nexuspay.data.datasource.remote_ds.transaction.TransactionRemoteDataImpl
-import com.example.nexuspay.data.datasource.remote_ds.user.UserRemoteData
-import com.example.nexuspay.data.datasource.remote_ds.user.UserRemoteDataImpl
-import com.example.nexuspay.data.datasource.repository.TransactionRepoImpl
-import com.example.nexuspay.data.setup.database.TransactionRequestDataBase
+import com.example.nexuspay.data.repository.UserRepoImpl
+import com.example.nexuspay.data.local_ds.transaction.TransactionLocalData
+import com.example.nexuspay.data.local_ds.transaction.TransactionLocalDataImpl
+import com.example.nexuspay.data.local_ds.user.UserLocalData
+import com.example.nexuspay.data.local_ds.user.UserLocalDataImpl
+import com.example.nexuspay.data.remote_ds.transaction.TransactionRemoteData
+import com.example.nexuspay.data.remote_ds.transaction.TransactionRemoteDataImpl
+import com.example.nexuspay.data.remote_ds.user.UserRemoteData
+import com.example.nexuspay.data.remote_ds.user.UserRemoteDataImpl
+import com.example.nexuspay.data.repository.TransactionRepoImpl
+import com.example.nexuspay.data.setup.database.RequestDataBase
 import com.example.nexuspay.domain.repository.TransactionRepo
-import com.example.nexuspay.domain.repository.UserDataRepo
-import com.example.nexuspay.domain.usecase.CreateTransactionUseCase
+import com.example.nexuspay.domain.repository.UserRepo
+import com.example.nexuspay.domain.usecase.SaveRequestUseCase
 import com.example.nexuspay.domain.usecase.GetTransactionUseCase
 import com.example.nexuspay.domain.usecase.GetUserUseCase
-import com.example.nexuspay.domain.usecase.CurrentTransactionUseCase
-import com.example.nexuspay.domain.usecase.RetryTransactionUseCase
+import com.example.nexuspay.domain.usecase.GetAllUserUseCase
+import com.example.nexuspay.domain.usecase.RetrySendMoneyUseCase
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.HomeViewModel
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.SendViewModel
 import com.example.nexuspay.workmanager.ScheduleManager
@@ -56,12 +56,12 @@ val nexusPayModule = module {
     single{
         Room.databaseBuilder(
             androidContext(),
-            TransactionRequestDataBase::class.java,
+            RequestDataBase::class.java,
             "request_database"
         ).build()
     }
 
-    single { get<TransactionRequestDataBase>().getRequestTransactionDao()}
+    single { get<RequestDataBase>().getRequestDao()}
 
     single { get<TransactionDataBase>().getTransactionDao()}
 
@@ -76,7 +76,7 @@ val nexusPayModule = module {
 
 
     // repository
-    single<UserDataRepo>{ UserDataRepoImpl(
+    single<UserRepo>{ UserRepoImpl(
         get(),
         get(),
         get()) }
@@ -90,9 +90,9 @@ val nexusPayModule = module {
     // usecase
     single{ GetUserUseCase(get()) }
     single{ GetTransactionUseCase(get()) }
-    single{ CurrentTransactionUseCase(get()) }
-    single{ CreateTransactionUseCase(get()) }
-    single{ RetryTransactionUseCase(get()) }
+    single{ GetAllUserUseCase(get()) }
+    single{ SaveRequestUseCase(get()) }
+    single{ RetrySendMoneyUseCase(get()) }
 
 
     // viewmodel

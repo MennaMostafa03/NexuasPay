@@ -2,8 +2,8 @@ package com.example.nexuspay.domain.usecase
 
 import com.example.nexuspay.domain.repository.TransactionRepo
 
-class RetryTransactionUseCase  (
+class RetrySendMoneyUseCase  (
     private val transactionRepo: TransactionRepo
 ) {
-    suspend fun invoke(id: Int) = transactionRepo.retryTransaction(id)
+    suspend fun invoke(id: Int) = transactionRepo.retrySendMoney(id)
 }

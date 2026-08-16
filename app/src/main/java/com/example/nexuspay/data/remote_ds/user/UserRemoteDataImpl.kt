@@ -1,4 +1,4 @@
-package com.example.nexuspay.data.datasource.remote_ds.user
+package com.example.nexuspay.data.remote_ds.user
 
 
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
@@ -9,7 +9,7 @@ import io.ktor.client.request.get
 
 class UserRemoteDataImpl(private val httpClient : HttpClient) : UserRemoteData {
 
-    override suspend fun userData() : Result<UserResponse>{
+    override suspend fun getUser() : Result<UserResponse>{
         try {
             val response = httpClient.get("users/${USER_IDENTIFIER}")
             val userResponse = response.body<UserResponse>()

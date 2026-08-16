@@ -46,23 +46,19 @@ fun SendMoneyScreen(navController: NavHostController, image: String?) {
 
     val context = LocalContext.current
     val viewModel = koinViewModel<SendViewModel>()
-
-    val recentContact by viewModel.recentContact.collectAsState()
-    val contactLoading by viewModel.isContactLoading.collectAsState()
-    val contactError by viewModel.contactErrorMessage.collectAsState()
-
-    val inputVal by viewModel.inputValue.collectAsState()
-    val text by viewModel.title.collectAsState()
-    val transferLoading by viewModel.isTransferLoading.collectAsState()
-    val message by viewModel.message.collectAsState()
+    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.loadRecentUser()
+        viewModel.loadUsers()
     }
 
-    LaunchedEffect(message) {
-        message?.let {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    LaunchedEffect(Unit) {
+        viewModel.message.collect { message ->
+            Toast.makeText(
+                context,
+                message,
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -132,7 +128,7 @@ fun SendMoneyScreen(navController: NavHostController, image: String?) {
             Spacer(Modifier.height(8.dp))
 
             when {
-                contactLoading -> {
+                state.usersLoading -> {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -151,22 +147,22 @@ fun SendMoneyScreen(navController: NavHostController, image: String?) {
                     }
                 }
 
-                contactError != null -> {
+                state.usersError != null -> {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = contactError?:"No network Connecion",
+                            text = state.usersError?:"No network Connecion",
                             style = AppTypography.bodySmall,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
 
-                !recentContact.isNullOrEmpty() -> {
-                    Contacts(recentContact ?: emptyList()) {
+                state.users.isNotEmpty() -> {
+                    Contacts(state.users) {
                         viewModel.onContactSelected(it?.identifier)
                     }
                 }
@@ -175,17 +171,16 @@ fun SendMoneyScreen(navController: NavHostController, image: String?) {
             Spacer(Modifier.height(18.dp))
 
             CustomKeyBoard(
-                input = inputVal,
+                input = state.inputValue,
+                title = state.title?:"",
+                onValueChange = {
+                    viewModel.onValueChange(it)
+                },
                 onClick = { symbol -> viewModel.onKeyboardClick(symbol) },
                 onRemoveClick = { viewModel.onRemoveClick() },
                 onTransferClick = { viewModel.onTransferClick() },
-                transferLoading = transferLoading,
-                title = text,
-                onValueChange = {
-                    viewModel.onAmountChange(it)
-                }
+                transferLoading = state.requestLoading
             )
-
         }
     }
 }

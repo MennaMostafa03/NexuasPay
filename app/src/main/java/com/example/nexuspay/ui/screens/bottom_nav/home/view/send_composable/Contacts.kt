@@ -39,7 +39,7 @@ fun Contacts(
     contacts: List<CurrentUserItem?>,
     onItemClicked : (item : CurrentUserItem?) -> Unit
 ) {
-    val selectedItem = remember {  mutableStateOf(CurrentUserItem)}
+    val selectedItem = remember {  mutableStateOf(CurrentUserItem())}
     LazyHorizontalGrid(
         modifier = Modifier
             .fillMaxWidth()
