@@ -1,0 +1,64 @@
+package com.example.nexuspay.ui.custom_composable
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.nexuspay.ui.theme.DarkGray
+import com.example.nexuspay.ui.theme.LightGray
+
+@Composable
+fun CustomTextField(
+    leadingIcon : (@Composable ()-> Unit)?,
+    placeholder : (@Composable ()-> Unit)?,
+    modifier: Modifier,
+    title : String? ,
+    onValueChange : (String) -> Unit
+){
+
+    Row (
+        modifier = Modifier.background(Color.Transparent)
+            .fillMaxWidth()
+            .height(50.dp)
+        ,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            value = title?:"",
+            onValueChange = onValueChange,
+            placeholder = placeholder,
+            leadingIcon = leadingIcon,
+            modifier = modifier,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = DarkGray,
+                cursorColor = LightGray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            textStyle = TextStyle(
+                fontSize = 14.sp,
+                color = LightGray
+            )
+        )
+    }
+
+}
