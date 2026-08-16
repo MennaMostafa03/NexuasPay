@@ -2,17 +2,14 @@ package com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nexuspay.domain.model.response.TransactionResponse
-import com.example.nexuspay.domain.model.response.UserResponse
 import com.example.nexuspay.domain.usecase.GetTransactionUseCase
 import com.example.nexuspay.domain.usecase.GetUserUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class CommonViewModel(
     private val userUseCase: GetUserUseCase,
     private val transactionUseCase: GetTransactionUseCase
 ) : ViewModel() {
@@ -52,8 +49,7 @@ class HomeViewModel(
                 if (transactionResult.isSuccess && transactionResult.getOrNull() != null) {
                     _transactionState.value = _transactionState.value.copy(transaction =
                         transactionResult.getOrNull()?.
-                        sortedByDescending { it.id }?.
-                        take(4)?.groupBy { it.date })
+                        sortedByDescending { it.id })
                 } else {
                     _transactionState.value = _transactionState.value
                         .copy(transactionErrorMessage = transactionResult.exceptionOrNull()?.localizedMessage)
@@ -65,6 +61,7 @@ class HomeViewModel(
             } finally {
                 _transactionState.value = _transactionState.value.copy(isTransactionLoading = false)
             }
+
         }
     }
 

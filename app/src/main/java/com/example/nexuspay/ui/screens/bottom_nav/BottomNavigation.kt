@@ -55,50 +55,44 @@ fun BottomNavigation(navController: NavHostController) {
         selectedTextColor = LightBlue
     )
 
-    Surface(
-        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-        color = Color.Transparent,
-    )
-    {
-        NavigationBar(
-            containerColor = Black.copy(0.5f),
-            modifier = Modifier
-                .height(84.dp)
-                .padding(top = 1.dp)
-                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-        ) {
-            for (item in navItem){
-                val isSelected = selectedIndex == item.index
-                NavigationBarItem(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp, vertical = 4.dp)
-                        .background(
-                            color = if (isSelected) LightBlue.copy(0.1f) else Color.Transparent,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                    ,
-                    selected = isSelected,
-                    onClick = {
-                        selectedIndex = item.index
-                        navController.navigate(item.route)
-                    },
-                    icon = {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ){
-                            Icon(
-                                painter = painterResource(item.icon) ,
-                                contentDescription = item.title,
-                                Modifier.width(20.dp).height(16.dp))
-                        }
-                    },
-                    label = {
-                        Text(item.title, fontSize = 12.sp,
-                            color = if (isSelected) LightBlue else Color.White,)
-                    },
-                    colors = navBarItemColor
-                )
-            }
+    NavigationBar(
+        containerColor = Black,
+        modifier = Modifier
+            .height(84.dp)
+            .padding(top = 1.dp)
+            .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+    ) {
+        for (item in navItem){
+            val isSelected = selectedIndex == item.index
+            NavigationBarItem(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 4.dp)
+                    .background(
+                        color = if (isSelected) LightBlue.copy(0.1f) else Color.Transparent,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                ,
+                selected = isSelected,
+                onClick = {
+                    selectedIndex = item.index
+                    navController.navigate(item.route)
+                },
+                icon = {
+                    Box(
+                        contentAlignment = Alignment.Center
+                    ){
+                        Icon(
+                            painter = painterResource(item.icon) ,
+                            contentDescription = item.title,
+                            Modifier.width(20.dp).height(16.dp))
+                    }
+                },
+                label = {
+                    Text(item.title, fontSize = 12.sp,
+                        color = if (isSelected) LightBlue else Color.White,)
+                },
+                colors = navBarItemColor
+            )
         }
     }
 }

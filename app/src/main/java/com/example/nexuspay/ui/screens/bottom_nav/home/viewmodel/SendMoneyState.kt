@@ -1,6 +1,6 @@
 package com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel
 
-import com.example.nexuspay.domain.model.request.TransactionEntity
+import com.example.nexuspay.domain.model.request.RequestEntity
 import com.example.nexuspay.domain.model.response.CurrentUserItem
 
 data class SendMoneyState(
@@ -10,5 +10,5 @@ data class SendMoneyState(
     var requestLoading : Boolean = false,
     var inputValue : String = "0.00",
     var title : String? = "",
-    var entity : TransactionEntity = TransactionEntity()
+    var entity : RequestEntity = RequestEntity()
 )

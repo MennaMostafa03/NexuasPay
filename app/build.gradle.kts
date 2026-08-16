@@ -89,5 +89,13 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.koin.androidx.workmanager)
 
+    //pagging 3
+    val paging_version = "3.4.2"
+
+    implementation(libs.androidx.paging.common)
+
+    // Jetpack Compose integration
+    implementation(libs.androidx.paging.compose)
+
 
 }

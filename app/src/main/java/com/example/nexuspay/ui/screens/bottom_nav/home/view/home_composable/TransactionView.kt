@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.nexuspay.ui.custom_composable.TransactionItem
+import com.example.nexuspay.ui.custom_composable.CustomTransactionItem
 import com.example.nexuspay.domain.model.response.TransactionResponse
 import com.example.nexuspay.ui.theme.DarkGray
 import com.example.nexuspay.ui.theme.LightBlue
+import com.example.nexuspay.ui.theme.White
 import dateFormat
+import timeFormat
 
 @Composable
 fun TransactionView(
@@ -49,13 +51,16 @@ fun TransactionView(
             val dateHeader = dateFormat(date?:"")
 
             items(items = transactionItems, key = { it.id!! }){ item ->
-                TransactionItem(
-                    dateHeader,
-                    item,
+                CustomTransactionItem(
+                    item = item,
+                    iconColor = White,
+                    text = "${ if (dateHeader == "Today") timeFormat(item.time) else dateHeader} " + ". ${item.type}",
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .background(DarkGray.copy(0.4f))
-                        .border(1.dp, Color.White.copy(0.08f), RoundedCornerShape(12.dp))
+                        .border(1.dp, Color.White.copy(0.08f), RoundedCornerShape(12.dp)),
+                    state = item.state,
+                    cornerSize = 50
                 )
             }
         }

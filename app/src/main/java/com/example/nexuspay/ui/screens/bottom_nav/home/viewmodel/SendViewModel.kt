@@ -3,7 +3,7 @@ package com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
-import com.example.nexuspay.domain.model.request.TransactionEntity
+import com.example.nexuspay.domain.model.request.RequestEntity
 import com.example.nexuspay.domain.usecase.SaveRequestUseCase
 import com.example.nexuspay.domain.usecase.GetAllUserUseCase
 import com.example.nexuspay.utils.exception.TransactionResult
@@ -95,7 +95,7 @@ class SendViewModel(
     fun onTransferClick() {
         sendMoney(_state.value.entity.copy(id = null))
         _state.value = _state.value.copy(
-            entity = TransactionEntity(),
+            entity = RequestEntity(),
             inputValue = "0.00",
             title = ""
         )
@@ -104,7 +104,7 @@ class SendViewModel(
 //            _inputValue.value = "0.00"
 //            _title.value = ""
     }
-    fun sendMoney(entity: TransactionEntity) {
+    fun sendMoney(entity: RequestEntity) {
         viewModelScope.launch {
             _state.value = _state.value.copy(requestLoading = true)
             val transferResult = saveRequestUseCase.invoke(entity)

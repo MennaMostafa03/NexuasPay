@@ -18,6 +18,9 @@ coil = "3.5.0"
 
 koin = "4.2.2"
 
+pagingCommon = "3.5.1"
+pagingCompose = "3.5.1"
+
 room = "2.8.4"
 
 datastore = "1.2.1"
@@ -89,3 +92,7 @@ okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 
 # WorkManager
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+
+# Pagging
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommon" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }

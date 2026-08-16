@@ -4,7 +4,7 @@ import com.example.nexuspay.data.local_ds.transaction.TransactionLocalData
 import com.example.nexuspay.data.remote_ds.transaction.TransactionRemoteData
 import com.example.nexuspay.data.setup.connectivity.Connectivity
 import com.example.nexuspay.data.setup.toRequest
-import com.example.nexuspay.domain.model.request.TransactionEntity
+import com.example.nexuspay.domain.model.request.RequestEntity
 import com.example.nexuspay.domain.model.response.CurrentUserItem
 import com.example.nexuspay.domain.model.response.TransactionResponse
 import com.example.nexuspay.domain.repository.TransactionRepo
@@ -48,7 +48,7 @@ class TransactionRepoImpl(
         }
     }
 
-    override suspend fun saveRequestRepo(entity: TransactionEntity): TransactionResult {
+    override suspend fun saveRequestRepo(entity: RequestEntity): TransactionResult {
         val savedEntity =
             localDB.saveRequestInDB(entity)
         val result =
@@ -58,7 +58,7 @@ class TransactionRepoImpl(
         }
         return result
     }
-    override suspend fun sendRequestRepo(entity : TransactionEntity) : TransactionResult {
+    override suspend fun sendRequestRepo(entity : RequestEntity) : TransactionResult {
         val result = remoteDB.sendRequest(entity.toRequest())
         if (result.isSuccess && result.getOrNull() != null) {
             localDB.deleteRequestFromDB(entity)
@@ -72,6 +72,7 @@ class TransactionRepoImpl(
             return TransactionResult.Failed
         }
     }
+
     override suspend fun retrySendMoney(id: Int) : TransactionResult {
         val entity =  localDB.getRequestByIdFromDB(id)
         return  sendRequestRepo(entity)

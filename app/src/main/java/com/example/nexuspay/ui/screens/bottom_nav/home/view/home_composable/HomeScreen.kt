@@ -38,14 +38,14 @@ import com.example.nexuspay.ui.custom_composable.CustomTopAppBar
 import com.example.nexuspay.ui.custom_composable.ShimmerBox
 import com.example.nexuspay.ui.custom_composable.ShimmerCircle
 import com.example.nexuspay.ui.routes.Routes
-import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.HomeViewModel
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(navController: NavController){
-    val viewModel = koinViewModel<HomeViewModel>()
+    val viewModel = koinViewModel<CommonViewModel>()
     val userState by viewModel.userState.collectAsState()
     val transactionState by viewModel.transactionState.collectAsState()
 
@@ -176,7 +176,7 @@ fun HomeScreen(navController: NavController){
                 }
 
                 !transactionState.transaction.isNullOrEmpty() -> {
-                    TransactionView(transactionState.transaction)
+                    TransactionView(transactionState.transaction?.take(4)?.groupBy { it.date})
                 }
             }
         }

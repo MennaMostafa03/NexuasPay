@@ -21,7 +21,6 @@ fun dateFormat(date: String) : String{
             dateCheck =  "Yesterday"
         else -> dateCheck = localDate.format(formatter)
     }
-
     return dateCheck
 }
 

@@ -13,7 +13,7 @@ data class UserState(
 
 
 data class TransactionState(
-     var transaction : Map<String?, List<TransactionResponse>>? = null,
+     var transaction : List<TransactionResponse>? = emptyList(),
      var isTransactionLoading : Boolean = false,
      var transactionErrorMessage : String? = null
 )

@@ -25,7 +25,7 @@ import com.example.nexuspay.domain.usecase.GetTransactionUseCase
 import com.example.nexuspay.domain.usecase.GetUserUseCase
 import com.example.nexuspay.domain.usecase.GetAllUserUseCase
 import com.example.nexuspay.domain.usecase.RetrySendMoneyUseCase
-import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.HomeViewModel
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.SendViewModel
 import com.example.nexuspay.workmanager.ScheduleManager
 import com.example.nexuspay.workmanager.ScheduleManagerImpl
@@ -96,7 +96,7 @@ val nexusPayModule = module {
 
 
     // viewmodel
-    viewModel{ HomeViewModel(get(), get()) }
+    single{ CommonViewModel(get(), get()) }
     viewModel{ SendViewModel(get(), get()) }
 
 

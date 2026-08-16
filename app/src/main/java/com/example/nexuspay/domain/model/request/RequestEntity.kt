@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
 
 @Entity
-data class TransactionEntity(
+data class RequestEntity(
     @PrimaryKey(autoGenerate = true)
     var id : Int ? = null,
 
