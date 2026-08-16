@@ -2,6 +2,7 @@ package com.example.nexuspay
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Scaffold
@@ -17,11 +18,12 @@ import com.example.nexuspay.ui.screens.bottom_nav.home.view.home_composable.Home
 import com.example.nexuspay.ui.screens.bottom_nav.home.view.send_composable.SendMoneyScreen
 import com.example.nexuspay.ui.screens.bottom_nav.transaction.TransactionScreen
 import com.example.nexuspay.ui.theme.NexusPayTheme
-
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
+        )
         setContent {
             NexusPayTheme {
                 NexusPay()
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
 fun NexusPay(){
 
     val navController = rememberNavController()
+
 
     Scaffold(
         bottomBar = {
