@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.nexuspay.R
 import com.example.nexuspay.ui.custom_composable.CustomTopAppBar
+import com.example.nexuspay.ui.custom_composable.CustomTransactionItem
 import com.example.nexuspay.ui.custom_composable.ShimmerBox
 import com.example.nexuspay.ui.custom_composable.ShimmerCircle
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
@@ -41,6 +42,9 @@ import com.example.nexuspay.ui.theme.LightGray
 import com.example.nexuspay.ui.theme.White
 import dateFormat
 import org.koin.compose.viewmodel.koinViewModel
+import timeFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TransactionScreen(navController: NavController){
@@ -180,10 +184,16 @@ fun TransactionScreen(navController: NavController){
                                 Spacer(Modifier.height(8.dp))
                             }
                             items(items = transactionItems, key = { it.id!! }) { item ->
-                                TransactionHistory(
+
+                                CustomTransactionItem(
                                     item = item,
                                     iconColor = if(item.type == "SENT") Green else LightBlue,
-                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                    text = LocalDate.parse(item.date)
+                                        .format(DateTimeFormatter.ofPattern("MMM dd"))+ " . " + timeFormat(item.time),
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                        .background(Color.Transparent),
+                                    cornerSize = 16
                                 )
                             }
                             item {

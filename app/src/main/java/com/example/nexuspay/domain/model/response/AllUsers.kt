@@ -3,6 +3,7 @@ package com.example.nexuspay.domain.model.response
 import kotlinx.serialization.Serializable
 
 
+// getting all user that i sent and received transactions
 @Serializable
 data class CurrentUserItem(
 	val identifier: String? = null,

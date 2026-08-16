@@ -5,6 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
 
+
+//  data to send money request put in db
 @Entity
 data class RequestEntity(
     @PrimaryKey(autoGenerate = true)

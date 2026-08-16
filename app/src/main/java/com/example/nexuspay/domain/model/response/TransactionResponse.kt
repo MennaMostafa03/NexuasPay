@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
+
+// getting all history transaction
 @Entity
 @Serializable
 data class TransactionResponse(

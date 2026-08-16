@@ -5,6 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
+
+// to get my data
 @Entity
 @Serializable
 data class UserResponse(
