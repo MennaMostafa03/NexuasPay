@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.example.nexuspay.R
@@ -42,7 +43,7 @@ import com.example.nexuspay.ui.theme.LightGray
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SendMoneyScreen(navController: NavHostController, image: String?) {
+fun SendMoneyScreen(navController: NavController, image: String?) {
 
     val context = LocalContext.current
     val viewModel = koinViewModel<SendViewModel>()
@@ -98,25 +99,33 @@ fun SendMoneyScreen(navController: NavHostController, image: String?) {
             Modifier
                 .padding(horizontal = 10.dp, vertical = 16.dp)
                 .fillMaxWidth(),
-        ) {
-            CustomTextField(
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "search",
-                        tint = LightGray,
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
-                placeholder = {
-                    Text(
-                        text = "Name, email, or phone number",
-                        style = AppTypography.bodyMedium.copy(LightGray.copy(0.5f))
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(0.95f),
-                title = ""
-            ) {}
+        )
+        {
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CustomTextField(
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = "search",
+                            tint = LightGray,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            text = "Name, email, or phone number",
+                            style = AppTypography.bodyMedium.copy(LightGray.copy(0.5f))
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(0.90f),
+                    title = "",
+                ) {}
+            }
+
 
             Spacer(Modifier.height(10.dp))
 

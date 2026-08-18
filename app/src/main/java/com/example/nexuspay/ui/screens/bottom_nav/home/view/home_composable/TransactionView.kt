@@ -54,7 +54,7 @@ fun TransactionView(
                 CustomTransactionItem(
                     item = item,
                     iconColor = White,
-                    text = "${ if (dateHeader == "Today") timeFormat(item.time) else dateHeader} " + ". ${item.type}",
+                    text = "${ if (dateHeader == "Today") timeFormat(item.time) else dateHeader} " + " •  ${item.type}",
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .background(DarkGray.copy(0.4f))

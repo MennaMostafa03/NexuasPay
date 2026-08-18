@@ -12,6 +12,9 @@ sealed class  Routes{
     object CardRoute : Routes()
 
     @Serializable
+    data class AddNewCardRoute(val name: String?): Routes()
+
+    @Serializable
     object TransactionRoute : Routes()
 
     @Serializable

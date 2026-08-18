@@ -39,17 +39,21 @@ import com.example.nexuspay.ui.custom_composable.ShimmerBox
 import com.example.nexuspay.ui.custom_composable.ShimmerCircle
 import com.example.nexuspay.ui.routes.Routes
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.TransactionState
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.UserState
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun HomeScreen(navController: NavController){
-    val viewModel = koinViewModel<CommonViewModel>()
-    val userState by viewModel.userState.collectAsState()
-    val transactionState by viewModel.transactionState.collectAsState()
-
-    LaunchedEffect(Unit) { viewModel.loadData() }
+fun HomeScreen(
+    navController: NavController,
+    userState: StateFlow<UserState>,
+    transactionState: StateFlow<TransactionState>
+){
+    val userState by userState.collectAsState()
+    val transactionState by transactionState.collectAsState()
 
     Column(Modifier.background(Color.Black.copy(0.9f)).fillMaxSize())
     {
@@ -74,7 +78,7 @@ fun HomeScreen(navController: NavController){
                     painterResource(R.drawable.ic_notification),
                     contentDescription = "notification",
                     tint = LightGray,
-                    modifier = Modifier.width(16.dp).height(20.dp)
+                    modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(10.dp))
             },

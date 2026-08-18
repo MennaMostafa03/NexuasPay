@@ -1,0 +1,253 @@
+package com.example.nexuspay.ui.screens.bottom_nav.card
+
+import AppTypography
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.nexuspay.R
+import com.example.nexuspay.ui.custom_composable.CustomButton
+import com.example.nexuspay.ui.custom_composable.CustomCard
+import com.example.nexuspay.ui.custom_composable.CustomTextField
+import com.example.nexuspay.ui.custom_composable.CustomTopAppBar
+import com.example.nexuspay.ui.theme.Black
+import com.example.nexuspay.ui.theme.DarkGray
+import com.example.nexuspay.ui.theme.Gray
+import com.example.nexuspay.ui.theme.LightBlue
+import com.example.nexuspay.ui.theme.LightGray
+import com.example.nexuspay.ui.theme.White
+
+@Composable
+fun AddNewCardScreen(navController: NavController, name: String?) {
+
+    Column(
+        modifier = Modifier
+            .background(Color.Black.copy(0.9f))
+            .fillMaxSize()
+    ) {
+        CustomTopAppBar(
+            title = name ?: "",
+            navigationIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_back_arrow),
+                    contentDescription = "back arrow",
+                    tint = LightBlue,
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .size(20.dp)
+                        .clickable { navController.popBackStack() }
+                )
+            }
+        )
+        LazyColumn (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(bottom = 70.dp),
+        )
+        {
+            item{
+                Text(
+                    text = "Add New Card",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = AppTypography.displayMedium.copy(fontSize = 34.sp)
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = "Link a secure payment method to your digital vault.",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = AppTypography.bodySmall
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                CustomCard(
+                    backgroundContent = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(DarkGray, Gray),
+                                        start = Offset(0f, Float.POSITIVE_INFINITY),
+                                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_image),
+                                contentDescription = null,
+                                modifier = Modifier.size(30.dp),
+                                tint = LightBlue.copy(0.2f)
+                            )
+                        }
+                    },
+                    connectionIconTint = LightBlue.copy(alpha = 0.6f),
+                    middleContent = {
+                        Spacer(Modifier.height(5.dp))
+                        Icon(
+                            painter = painterResource(R.drawable.ic_cards),
+                            contentDescription = null,
+                            modifier = Modifier.size(25.dp),
+                            tint = LightBlue
+                        )
+                    },
+                    cardHeight = 175.dp,
+                    header = "NEXUS ELITE",
+                    cardHolderName = "YOUR NAME",
+                    expiryDate = "MM/YY",
+                    contentPadding = PaddingValues(horizontal = 26.dp, vertical = 16.dp),
+                    headerColor = Color.White.copy(alpha = 0.7f),
+                    bodyColor = Color.White
+                )
+
+                Spacer(Modifier.height(24.dp))
+
+                fields.take(2).forEach { field ->
+                    CustomTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .border(1.dp, LightGray, RoundedCornerShape(16.dp))
+                            .background(White),
+                        title = "",
+                        placeholder = {
+                            Text(
+                                text = field.placeholder,
+                                style = AppTypography.bodySmall.copy(Black)
+                            )
+                        },
+                        label = field.label
+                    ) {}
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    fields.drop(2).forEach { field ->
+                        Column(Modifier.weight(1f)) {
+                            CustomTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .border(1.dp, LightGray, RoundedCornerShape(16.dp))
+                                    .background(White),
+                                title = "",
+                                placeholder = {
+                                    Text(
+                                        text = field.placeholder,
+                                        style = AppTypography.bodySmall.copy(Black)
+                                    )
+                                },
+                                label = field.label
+                            ) {}
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                    border = BorderStroke(1.dp, LightGray.copy(alpha = 0.2f)),
+                    colors = CardDefaults.cardColors(containerColor = Gray.copy(alpha = 0.5f))
+                )
+                {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Gray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_security),
+                                contentDescription = null,
+                                tint = LightBlue,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+
+                        Spacer(Modifier.width(14.dp))
+
+                        Text(
+                            text = "Your payment information is encrypted\nand never stored on our servers.\nTransactions are processed through an\nindustry-standard secure gateway.",
+                            style = AppTypography.bodySmall,
+                            lineHeight = 22.sp
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+
+                CustomButton(
+                    text = "Add Card",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .dropShadow(
+                            shape = RoundedCornerShape(20.dp),
+                            shadow = Shadow(
+                                radius = 10.dp,
+                                spread = 6.dp,
+                                color = LightBlue.copy(alpha = 0.3f),
+                                offset = DpOffset(0.dp, 0.dp)
+                            )
+                        ),
+                    containerColor = LightBlue,
+                    elevation = 8.dp,
+                    onClick = {}
+                )
+
+                Spacer(Modifier.height(18.dp))
+            }
+        }
+    }
+}

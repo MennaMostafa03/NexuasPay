@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package com.example.nexuspay.ui.custom_composable
 
 import AppTypography
@@ -7,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -34,40 +33,36 @@ fun CustomTopAppBar(
         color = Color.Transparent
     ){
         Column{
-            if (action != null) {
-                TopAppBar(
-                    title = {
-                        if (isLoading == true) {
-                            ShimmerBox(
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .height(18.dp)
-                            )
-                        } else {
-                            Text(
-                                text = title,
-                                style = AppTypography.displayLarge
-                            )
-                        }
-                    },
-                    actions = action,
-                    navigationIcon = navigationIcon,
-                    colors = TopAppBarColors(
-                        containerColor = Black.copy(0.5f),
-                        navigationIconContentColor = LightBlue,
-                        titleContentColor = LightBlue,
-                        actionIconContentColor = LightBlue,
-                        scrolledContainerColor = Color.Transparent,
-                        subtitleContentColor = Color.Transparent
-                    ),
-                )
-            }
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = LightGray.copy(alpha = 0.1f)
+            CenterAlignedTopAppBar(
+                title = {
+                    if (isLoading == true) {
+                        ShimmerBox(
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(18.dp)
+                        )
+                    } else {
+                        Text(
+                            text = title,
+                            style = AppTypography.displayLarge
+                        )
+                    }
+                },
+                actions = action?:{},
+                navigationIcon = navigationIcon,
+                colors = TopAppBarColors(
+                    containerColor = Black.copy(0.5f),
+                    navigationIconContentColor = LightBlue,
+                    titleContentColor = LightBlue,
+                    actionIconContentColor = LightBlue,
+                    scrolledContainerColor = Color.Transparent,
+                    subtitleContentColor = Color.Transparent
+                ),
             )
         }
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = LightGray.copy(alpha = 0.1f)
+        )
     }
-
-
 }

@@ -7,17 +7,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.nexuspay.ui.routes.Routes
 import com.example.nexuspay.ui.screens.bottom_nav.BottomNavigation
+import com.example.nexuspay.ui.screens.bottom_nav.card.AddNewCardScreen
 import com.example.nexuspay.ui.screens.bottom_nav.card.CardScreen
 import com.example.nexuspay.ui.screens.bottom_nav.home.view.home_composable.HomeScreen
 import com.example.nexuspay.ui.screens.bottom_nav.home.view.send_composable.SendMoneyScreen
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
 import com.example.nexuspay.ui.screens.bottom_nav.transaction.TransactionScreen
 import com.example.nexuspay.ui.theme.NexusPayTheme
+import org.koin.compose.koinInject
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +42,8 @@ class MainActivity : ComponentActivity() {
 fun NexusPay(){
 
     val navController = rememberNavController()
+    val viewModel = koinInject<CommonViewModel>()
+    LaunchedEffect(Unit) { viewModel.loadData() }
 
 
     Scaffold(
@@ -50,7 +57,7 @@ fun NexusPay(){
         ) {
 
             composable<Routes.HomeRoute>{
-                HomeScreen(navController)
+                HomeScreen(navController, viewModel.userState, viewModel.transactionState)
             }
 
             composable<Routes.SendMoneyRoute>{ navBackStackEntry ->
@@ -59,10 +66,16 @@ fun NexusPay(){
             }
 
             composable<Routes.CardRoute>{
-                CardScreen(navController)
+                CardScreen(navController, viewModel.userState)
             }
+
+            composable<Routes.AddNewCardRoute>{navBackStackEntry ->
+                val route = navBackStackEntry.toRoute<Routes.AddNewCardRoute>()
+                AddNewCardScreen(navController, route.name)
+            }
+
             composable<Routes.TransactionRoute>{
-                TransactionScreen(navController)
+                TransactionScreen(navController, viewModel.userState, viewModel.transactionState)
             }
         }
     }

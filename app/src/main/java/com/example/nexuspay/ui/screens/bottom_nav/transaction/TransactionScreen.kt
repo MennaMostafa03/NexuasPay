@@ -36,22 +36,29 @@ import com.example.nexuspay.ui.custom_composable.CustomTransactionItem
 import com.example.nexuspay.ui.custom_composable.ShimmerBox
 import com.example.nexuspay.ui.custom_composable.ShimmerCircle
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.TransactionState
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.UserState
 import com.example.nexuspay.ui.theme.Green
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
+import com.example.nexuspay.ui.theme.Milky
 import com.example.nexuspay.ui.theme.White
 import dateFormat
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.viewmodel.koinViewModel
 import timeFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun TransactionScreen(navController: NavController){
-    val viewModel = koinViewModel<CommonViewModel>()
+fun TransactionScreen(
+    navController: NavController,
+    userState: StateFlow<UserState>,
+    transactionState: StateFlow<TransactionState>
+){
 
-    val userState by viewModel.userState.collectAsState()
-    val transactionState by viewModel.transactionState.collectAsState()
+    val userState by userState.collectAsState()
+    val transactionState by transactionState.collectAsState()
 
     Column(
         modifier = Modifier.background(Color.Black.copy(0.9f)).fillMaxSize()
@@ -105,7 +112,7 @@ fun TransactionScreen(navController: NavController){
                 transactionState.isTransactionLoading -> {
                     Text(
                         "Transactions",
-                        style = AppTypography.displayLarge.copy(color = LightGray),
+                        style = AppTypography.displayLarge.copy(color = Milky),
                     )
 
                     Text(
@@ -189,7 +196,7 @@ fun TransactionScreen(navController: NavController){
                                     item = item,
                                     iconColor = if(item.type == "SENT") Green else LightBlue,
                                     text = LocalDate.parse(item.date)
-                                        .format(DateTimeFormatter.ofPattern("MMM dd"))+ " . " + timeFormat(item.time),
+                                        .format(DateTimeFormatter.ofPattern("MMM dd"))+ "  •  " + timeFormat(item.time),
                                     modifier = Modifier
                                         .padding(horizontal = 8.dp)
                                         .background(Color.Transparent),

@@ -1,11 +1,15 @@
 package com.example.nexuspay.ui.custom_composable
 
+import AppTypography
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -24,21 +28,20 @@ import com.example.nexuspay.ui.theme.LightGray
 
 @Composable
 fun CustomTextField(
-    leadingIcon : (@Composable ()-> Unit)?,
-    placeholder : (@Composable ()-> Unit)?,
+    leadingIcon : (@Composable ()-> Unit)? = null,
+    placeholder : (@Composable ()-> Unit)? = {},
     modifier: Modifier,
     title : String? ,
-    onValueChange : (String) -> Unit
+    label : String? = null,
+    onValueChange : (String) -> Unit,
 ){
+        label?.let {
+            Text(
+                label,
+                style = AppTypography.titleSmall)
+            Spacer(Modifier.height(12.dp))
+        }
 
-    Row (
-        modifier = Modifier.background(Color.Transparent)
-            .fillMaxWidth()
-            .height(50.dp)
-        ,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
         TextField(
             value = title?:"",
             onValueChange = onValueChange,
@@ -60,5 +63,3 @@ fun CustomTextField(
             )
         )
     }
-
-}

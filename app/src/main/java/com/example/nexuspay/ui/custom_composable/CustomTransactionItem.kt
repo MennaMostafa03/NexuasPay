@@ -2,6 +2,7 @@ package com.example.nexuspay.ui.custom_composable
 
 import AppTypography
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -73,11 +74,15 @@ fun CustomTransactionItem(
             Spacer(Modifier.width(16.dp))
 
             Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f)
             )
             {
-                Text(if (item.description.isNullOrEmpty()) "No description" else item.description,
-                    style = AppTypography.bodyMedium)
+                Text(
+                    if (item.description.isNullOrEmpty()) "No description" else item.description,
+                    style = AppTypography.bodyMedium,
+                    maxLines = 1
+                )
 
                 Text("$text" ,
                     style = AppTypography.bodySmall)

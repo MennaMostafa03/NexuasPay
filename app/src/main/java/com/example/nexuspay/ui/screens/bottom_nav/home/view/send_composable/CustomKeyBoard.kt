@@ -136,8 +136,11 @@ fun CustomKeyBoard(
             CustomButton(
                 "Confirm Transfer",
                 modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(Blue),
-                icon = painterResource(R.drawable.ic_send)
+                icon = painterResource(R.drawable.ic_send),
+                containerColor = Blue
             ) {
                 onTransferClick()
             }
