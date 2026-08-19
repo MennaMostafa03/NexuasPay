@@ -1,4 +1,4 @@
-package com.example.nexuspay.domain.usecase
+package com.example.nexuspay.domain.usecase.user
 
 import com.example.nexuspay.domain.repository.UserRepo
 

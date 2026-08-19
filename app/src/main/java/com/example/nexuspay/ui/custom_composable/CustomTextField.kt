@@ -21,6 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nexuspay.ui.theme.DarkGray
@@ -31,8 +34,10 @@ fun CustomTextField(
     leadingIcon : (@Composable ()-> Unit)? = null,
     placeholder : (@Composable ()-> Unit)? = {},
     modifier: Modifier,
-    title : String? ,
+    title : String?,
     label : String? = null,
+    textColor: Color,
+    visualTransformation: VisualTransformation? = VisualTransformation.None,
     onValueChange : (String) -> Unit,
 ){
         label?.let {
@@ -42,6 +47,7 @@ fun CustomTextField(
             Spacer(Modifier.height(12.dp))
         }
 
+    if (visualTransformation != null) {
         TextField(
             value = title?:"",
             onValueChange = onValueChange,
@@ -59,7 +65,9 @@ fun CustomTextField(
             ),
             textStyle = TextStyle(
                 fontSize = 14.sp,
-                color = LightGray
-            )
+                color = textColor
+            ),
+            visualTransformation = visualTransformation
         )
+    }
     }

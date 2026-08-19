@@ -1,4 +1,4 @@
-package com.example.nexuspay.domain.usecase
+package com.example.nexuspay.domain.usecase.transaction
 
 import com.example.nexuspay.domain.model.request.RequestEntity
 import com.example.nexuspay.domain.repository.TransactionRepo

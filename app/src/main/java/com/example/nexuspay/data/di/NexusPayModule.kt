@@ -3,6 +3,8 @@ package com.example.nexuspay.data.di
 
 import androidx.room.Room
 import androidx.work.WorkerFactory
+import com.example.nexuspay.data.local_ds.card.CardLocalData
+import com.example.nexuspay.data.local_ds.card.CardLocalDataImpl
 import com.example.nexuspay.data.setup.api.createHttpClient
 import com.example.nexuspay.data.setup.connectivity.Connectivity
 import com.example.nexuspay.data.setup.connectivity.ConnectivityImpl
@@ -16,15 +18,21 @@ import com.example.nexuspay.data.remote_ds.transaction.TransactionRemoteData
 import com.example.nexuspay.data.remote_ds.transaction.TransactionRemoteDataImpl
 import com.example.nexuspay.data.remote_ds.user.UserRemoteData
 import com.example.nexuspay.data.remote_ds.user.UserRemoteDataImpl
+import com.example.nexuspay.data.repository.CardRepoImpl
 import com.example.nexuspay.data.repository.TransactionRepoImpl
+import com.example.nexuspay.data.setup.database.CardDataBase
 import com.example.nexuspay.data.setup.database.RequestDataBase
+import com.example.nexuspay.domain.repository.CardRepo
 import com.example.nexuspay.domain.repository.TransactionRepo
 import com.example.nexuspay.domain.repository.UserRepo
-import com.example.nexuspay.domain.usecase.SaveRequestUseCase
-import com.example.nexuspay.domain.usecase.GetTransactionUseCase
-import com.example.nexuspay.domain.usecase.GetUserUseCase
-import com.example.nexuspay.domain.usecase.GetAllUserUseCase
-import com.example.nexuspay.domain.usecase.RetrySendMoneyUseCase
+import com.example.nexuspay.domain.usecase.card.AddCardUseCase
+import com.example.nexuspay.domain.usecase.card.GetCardUseCase
+import com.example.nexuspay.domain.usecase.transaction.SaveRequestUseCase
+import com.example.nexuspay.domain.usecase.transaction.GetTransactionUseCase
+import com.example.nexuspay.domain.usecase.user.GetUserUseCase
+import com.example.nexuspay.domain.usecase.transaction.GetAllUserUseCase
+import com.example.nexuspay.domain.usecase.transaction.RetrySendMoneyUseCase
+import com.example.nexuspay.ui.screens.bottom_nav.card.viewmodel.CardViewModel
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.SendViewModel
 import com.example.nexuspay.workmanager.ScheduleManager
@@ -53,6 +61,7 @@ val nexusPayModule = module {
             "transaction_database"
         ).build()
     }
+
     single{
         Room.databaseBuilder(
             androidContext(),
@@ -61,12 +70,23 @@ val nexusPayModule = module {
         ).build()
     }
 
+    single{
+        Room.databaseBuilder(
+            androidContext(),
+            CardDataBase::class.java,
+            "card_database"
+        ).build()
+    }
+
     single { get<RequestDataBase>().getRequestDao()}
 
     single { get<TransactionDataBase>().getTransactionDao()}
 
+    single { get<CardDataBase>().getCardDao()}
+
     single<UserLocalData>{ UserLocalDataImpl(get()) }
     single<TransactionLocalData>{ TransactionLocalDataImpl(get(), get()) }
+    single<CardLocalData>{ CardLocalDataImpl(get()) }
 
 
     // connectivity
@@ -86,6 +106,8 @@ val nexusPayModule = module {
             get(),
             get()) }
 
+    single<CardRepo>{ CardRepoImpl(get())}
+
 
     // usecase
     single{ GetUserUseCase(get()) }
@@ -93,11 +115,14 @@ val nexusPayModule = module {
     single{ GetAllUserUseCase(get()) }
     single{ SaveRequestUseCase(get()) }
     single{ RetrySendMoneyUseCase(get()) }
+    single{ AddCardUseCase(get()) }
+    single{ GetCardUseCase(get()) }
 
 
     // viewmodel
     single{ CommonViewModel(get(), get()) }
     viewModel{ SendViewModel(get(), get()) }
+    viewModel{ CardViewModel(get(),get()) }
 
 
     // worker

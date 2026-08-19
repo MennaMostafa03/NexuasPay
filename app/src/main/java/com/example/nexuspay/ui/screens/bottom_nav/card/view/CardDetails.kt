@@ -1,4 +1,4 @@
-package com.example.nexuspay.ui.screens.bottom_nav.card
+package com.example.nexuspay.ui.screens.bottom_nav.card.view
 
 import AppTypography
 import androidx.compose.foundation.background

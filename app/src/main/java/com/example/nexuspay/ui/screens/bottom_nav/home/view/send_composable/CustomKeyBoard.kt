@@ -90,7 +90,8 @@ fun CustomKeyBoard(
                 .background(Black.copy(0.4f), RoundedCornerShape(16.dp))
                 .border(1.dp, White.copy(0.05f), RoundedCornerShape(16.dp)),
             title = title,
-            onValueChange = onValueChange
+            onValueChange = onValueChange,
+            textColor = LightGray
         )
 
         Spacer(Modifier.height(10.dp))

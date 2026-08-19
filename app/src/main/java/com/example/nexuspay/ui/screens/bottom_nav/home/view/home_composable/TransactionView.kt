@@ -22,8 +22,8 @@ import com.example.nexuspay.domain.model.response.TransactionResponse
 import com.example.nexuspay.ui.theme.DarkGray
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.White
-import dateFormat
-import timeFormat
+import com.example.nexuspay.utils.dateFormat
+import com.example.nexuspay.utils.timeFormat
 
 @Composable
 fun TransactionView(

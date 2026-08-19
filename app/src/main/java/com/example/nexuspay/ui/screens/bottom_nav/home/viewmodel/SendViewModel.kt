@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nexuspay.data.setup.api.USER_IDENTIFIER
 import com.example.nexuspay.domain.model.request.RequestEntity
-import com.example.nexuspay.domain.usecase.SaveRequestUseCase
-import com.example.nexuspay.domain.usecase.GetAllUserUseCase
+import com.example.nexuspay.domain.usecase.transaction.SaveRequestUseCase
+import com.example.nexuspay.domain.usecase.transaction.GetAllUserUseCase
 import com.example.nexuspay.utils.exception.TransactionResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,7 +77,6 @@ class SendViewModel(
 
     fun onValueChange(newTitle: String?) {
         _state.value = _state.value.copy(title = newTitle?:"")
-
         _state.value = _state.value.copy(
             title = newTitle,
             entity = _state.value.entity.copy(
@@ -88,7 +87,6 @@ class SendViewModel(
 
     fun onContactSelected(identifier: String?) {
         _state.value.entity = _state.value.entity.copy(receiverIdentifier = identifier)
-
     }
 
     // when i click on transfer button
@@ -99,17 +97,12 @@ class SendViewModel(
             inputValue = "0.00",
             title = ""
         )
-
-//            _entity.value = TransactionEntity()
-//            _inputValue.value = "0.00"
-//            _title.value = ""
     }
     fun sendMoney(entity: RequestEntity) {
         viewModelScope.launch {
             _state.value = _state.value.copy(requestLoading = true)
             val transferResult = saveRequestUseCase.invoke(entity)
             _state.value = _state.value.copy(requestLoading = false)
-
             when (transferResult) {
                 TransactionResult.Pending ->
                     _message.emit("Your transfer is pending and will be processed automatically.")
@@ -119,7 +112,7 @@ class SendViewModel(
 
                 TransactionResult.Failed ->
                     _message.emit("Transfer failed. Please check the transaction details.")
-            }        }
+            }
+        }
     }
-
 }

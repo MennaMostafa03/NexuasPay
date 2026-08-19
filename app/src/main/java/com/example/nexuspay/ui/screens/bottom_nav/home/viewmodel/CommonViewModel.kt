@@ -2,8 +2,8 @@ package com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nexuspay.domain.usecase.GetTransactionUseCase
-import com.example.nexuspay.domain.usecase.GetUserUseCase
+import com.example.nexuspay.domain.usecase.transaction.GetTransactionUseCase
+import com.example.nexuspay.domain.usecase.user.GetUserUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

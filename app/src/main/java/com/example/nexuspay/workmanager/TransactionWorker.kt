@@ -3,7 +3,7 @@ package com.example.nexuspay.workmanager
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.nexuspay.domain.usecase.RetrySendMoneyUseCase
+import com.example.nexuspay.domain.usecase.transaction.RetrySendMoneyUseCase
 import com.example.nexuspay.utils.exception.TransactionResult
 
 class TransactionWorker(

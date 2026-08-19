@@ -1,6 +1,7 @@
-package com.example.nexuspay.ui.screens.bottom_nav.card
+package com.example.nexuspay.ui.screens.bottom_nav.card.view
 
 import AppTypography
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,15 +24,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -43,15 +47,36 @@ import com.example.nexuspay.ui.custom_composable.CustomButton
 import com.example.nexuspay.ui.custom_composable.CustomCard
 import com.example.nexuspay.ui.custom_composable.CustomTextField
 import com.example.nexuspay.ui.custom_composable.CustomTopAppBar
+import com.example.nexuspay.ui.screens.bottom_nav.card.viewmodel.CardViewModel
 import com.example.nexuspay.ui.theme.Black
-import com.example.nexuspay.ui.theme.DarkGray
 import com.example.nexuspay.ui.theme.Gray
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
+import com.example.nexuspay.ui.theme.Navy
 import com.example.nexuspay.ui.theme.White
+import org.koin.compose.koinInject
 
 @Composable
 fun AddNewCardScreen(navController: NavController, name: String?) {
+
+    val context = LocalContext.current
+    val viewModel = koinInject<CardViewModel>()
+    val state by viewModel.cardState.collectAsState()
+
+    LaunchedEffect(Unit)
+    {
+        viewModel.message.collect { it ->
+            if (it.isEmpty()) {
+                viewModel.addCardDetails()
+            }else {
+                Toast.makeText(
+                    context,
+                    it,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -99,27 +124,6 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
                 Spacer(Modifier.height(20.dp))
 
                 CustomCard(
-                    backgroundContent = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    brush = Brush.linearGradient(
-                                        colors = listOf(DarkGray, Gray),
-                                        start = Offset(0f, Float.POSITIVE_INFINITY),
-                                        end = Offset(Float.POSITIVE_INFINITY, 0f)
-                                    )
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_image),
-                                contentDescription = null,
-                                modifier = Modifier.size(30.dp),
-                                tint = LightBlue.copy(0.2f)
-                            )
-                        }
-                    },
                     connectionIconTint = LightBlue.copy(alpha = 0.6f),
                     middleContent = {
                         Spacer(Modifier.height(5.dp))
@@ -130,58 +134,91 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
                             tint = LightBlue
                         )
                     },
-                    cardHeight = 175.dp,
-                    header = "NEXUS ELITE",
-                    cardHolderName = "YOUR NAME",
-                    expiryDate = "MM/YY",
-                    contentPadding = PaddingValues(horizontal = 26.dp, vertical = 16.dp),
-                    headerColor = Color.White.copy(alpha = 0.7f),
-                    bodyColor = Color.White
+                    header = "NEXUS ELITE"
                 )
 
                 Spacer(Modifier.height(24.dp))
 
-                fields.take(2).forEach { field ->
-                    CustomTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .border(1.dp, LightGray, RoundedCornerShape(16.dp))
-                            .background(White),
-                        title = "",
-                        placeholder = {
-                            Text(
-                                text = field.placeholder,
-                                style = AppTypography.bodySmall.copy(Black)
-                            )
-                        },
-                        label = field.label
-                    ) {}
-                    Spacer(Modifier.height(16.dp))
-                }
+                CustomTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .border(1.dp, LightGray, RoundedCornerShape(16.dp))
+                        .background(White),
+                    title = state.cardEntity.cardNumber ,
+                    placeholder = {
+                        Text(
+                            text = "0000  0000  0000  0000",
+                            style = AppTypography.bodySmall.copy(Black)
+                        )
+                    },
+                    label = "Card Number",
+                    textColor = Black
+                ) { viewModel.onCardNumberChange(it) }
+
+                Spacer(Modifier.height(16.dp))
+
+                CustomTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .border(1.dp, LightGray, RoundedCornerShape(16.dp))
+                        .background(White),
+                    title = state.cardEntity.cardName ,
+                    placeholder = {
+                        Text(
+                            text = "ENTER FULL NAME",
+                            style = AppTypography.bodySmall.copy(Black)
+                        )
+                    },
+                    label = "Cardholder Name",
+                    textColor = Black
+                ) { viewModel.onCardNameChange(it) }
+
+                Spacer(Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    fields.drop(2).forEach { field ->
-                        Column(Modifier.weight(1f)) {
-                            CustomTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .border(1.dp, LightGray, RoundedCornerShape(16.dp))
-                                    .background(White),
-                                title = "",
-                                placeholder = {
-                                    Text(
-                                        text = field.placeholder,
-                                        style = AppTypography.bodySmall.copy(Black)
-                                    )
-                                },
-                                label = field.label
-                            ) {}
-                        }
+                )
+                {
+                    Column(Modifier.weight(1f)) {
+                        CustomTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .border(1.dp, LightGray, RoundedCornerShape(16.dp))
+                                .background(White),
+                            title = state.cardEntity.expireDate,
+                            placeholder = {
+                                Text(
+                                    text = "MM/YY",
+                                    style = AppTypography.bodySmall.copy(Gray)
+                                )
+                            },
+                            label = "Expiry Date",
+                            textColor = Black
+                        ) { viewModel.onExpireDateChange(it)}
+                    }
+
+                    Column(Modifier.weight(1f)) {
+                        CustomTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .border(1.dp, LightGray, RoundedCornerShape(16.dp))
+                                .background(White),
+                            title = state.cardEntity.cvv,
+                            placeholder = {
+                                Text(
+                                    text = "••••",
+                                    style = AppTypography.bodySmall.copy(Black)
+                                )
+                            },
+                            label = "CVV",
+                            textColor = Black,
+                            visualTransformation = PasswordVisualTransformation()
+                        ) { viewModel.onCVVChange(it) }
                     }
                 }
 
@@ -228,24 +265,43 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
 
                 Spacer(Modifier.height(24.dp))
 
-                CustomButton(
-                    text = "Add Card",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .dropShadow(
-                            shape = RoundedCornerShape(20.dp),
-                            shadow = Shadow(
-                                radius = 10.dp,
-                                spread = 6.dp,
-                                color = LightBlue.copy(alpha = 0.3f),
-                                offset = DpOffset(0.dp, 0.dp)
+                if (state.isLoading){
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(0.95f)
+                            .height(50.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                    ){
+                        Text(
+                            text = "Loading...",
+                            style = AppTypography.displayLarge.copy(
+                                Navy,
+                                fontWeight = FontWeight.Normal
                             )
-                        ),
-                    containerColor = LightBlue,
-                    elevation = 8.dp,
-                    onClick = {}
-                )
-
+                        )
+                    }
+                } else {
+                    CustomButton(
+                        text = "Add Card",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .dropShadow(
+                                shape = RoundedCornerShape(20.dp),
+                                shadow = Shadow(
+                                    radius = 10.dp,
+                                    spread = 6.dp,
+                                    color = LightBlue.copy(alpha = 0.3f),
+                                    offset = DpOffset(0.dp, 0.dp)
+                                )
+                            ),
+                        containerColor = LightBlue,
+                        elevation = 8.dp,
+                        onClick = {
+                            viewModel.validation()
+                        },
+                    )
+                }
                 Spacer(Modifier.height(18.dp))
             }
         }

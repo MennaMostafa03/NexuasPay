@@ -30,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.example.nexuspay.R
 import com.example.nexuspay.ui.custom_composable.CustomTextField
@@ -123,6 +122,7 @@ fun SendMoneyScreen(navController: NavController, image: String?) {
                     },
                     modifier = Modifier.fillMaxWidth(0.90f),
                     title = "",
+                    textColor = LightGray
                 ) {}
             }
 

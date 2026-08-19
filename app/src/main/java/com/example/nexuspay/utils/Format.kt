@@ -1,11 +1,12 @@
 @file:Suppress("TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 
+package com.example.nexuspay.utils
 
+
+import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Locale
 import java.util.TimeZone
 
@@ -35,6 +36,7 @@ fun timeFormat(time: String?) : String? {
     val parsedDate = parseTime.parse(time)
     return parsedDate?.let { formatter.format(it) } ?: time
 }
+
 fun balanceFormat(balance: Int, type: String?="", currency: String?) : String{
     val amount = balance.div(100.0)
     val amountFormat =  "%.2f".format(amount)
@@ -46,3 +48,14 @@ fun balanceFormat(balance: Int, type: String?="", currency: String?) : String{
     }
 }
 
+@SuppressLint("DefaultLocale")
+fun formatExpiryDate(value: String): String {
+    val parts = value.split("/")
+
+    if (parts.size != 2) return value
+
+    val month = parts[0].toIntOrNull() ?: return value
+    val year = parts[1]
+
+    return String.format("%02d/%s", month, year)
+}

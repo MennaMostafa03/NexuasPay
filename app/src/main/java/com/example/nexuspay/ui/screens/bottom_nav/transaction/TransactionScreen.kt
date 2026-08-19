@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,22 +44,20 @@ import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
 import com.example.nexuspay.ui.theme.Milky
 import com.example.nexuspay.ui.theme.White
-import dateFormat
+import com.example.nexuspay.utils.dateFormat
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.compose.viewmodel.koinViewModel
-import timeFormat
+import com.example.nexuspay.utils.timeFormat
+import org.koin.compose.koinInject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun TransactionScreen(
-    navController: NavController,
-    userState: StateFlow<UserState>,
-    transactionState: StateFlow<TransactionState>
+    navController: NavController
 ){
-
-    val userState by userState.collectAsState()
-    val transactionState by transactionState.collectAsState()
+    val viewModel = koinInject<CommonViewModel>()
+    val userState by viewModel.userState.collectAsState()
+    val transactionState by viewModel.transactionState.collectAsState()
 
     Column(
         modifier = Modifier.background(Color.Black.copy(0.9f)).fillMaxSize()

@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import balanceFormat
+import com.example.nexuspay.utils.balanceFormat
 import com.example.nexuspay.R
 import com.example.nexuspay.ui.custom_composable.CustomText
 import com.example.nexuspay.ui.theme.DarkGray

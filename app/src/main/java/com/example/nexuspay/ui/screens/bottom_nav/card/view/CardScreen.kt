@@ -1,10 +1,10 @@
-package com.example.nexuspay.ui.screens.bottom_nav.card
+package com.example.nexuspay.ui.screens.bottom_nav.card.view
 
 import AppTypography
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,13 +20,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,17 +39,31 @@ import com.example.nexuspay.ui.custom_composable.CustomCard
 import com.example.nexuspay.ui.custom_composable.CustomTopAppBar
 import com.example.nexuspay.ui.custom_composable.ShimmerCircle
 import com.example.nexuspay.ui.routes.Routes
+import com.example.nexuspay.ui.screens.bottom_nav.card.viewmodel.CardViewModel
+import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.CommonViewModel
 import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.UserState
+import com.example.nexuspay.ui.theme.DarkGray
+import com.example.nexuspay.ui.theme.Gray
 import com.example.nexuspay.ui.theme.Green
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
 import com.example.nexuspay.ui.theme.Milky
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.compose.koinInject
 
 
 @Composable
-fun CardScreen(navController: NavController, userState: StateFlow<UserState>){
-    val userState by userState.collectAsState()
+fun CardScreen(navController: NavController){
+
+    val viewModelData = koinInject<CommonViewModel>()
+    val userState by viewModelData.userState.collectAsState()
+    val viewModel = koinInject<CardViewModel>()
+    val state by viewModel.cardState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getCardDetails()
+    }
+
     Column(Modifier.background(Color.Black.copy(0.9f)).fillMaxSize())
     {
         CustomTopAppBar(
@@ -101,40 +117,33 @@ fun CardScreen(navController: NavController, userState: StateFlow<UserState>){
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
                     ){
-                        Text("3 Cards", style = AppTypography.titleSmall.copy(LightBlue))
+                        Text("${state.card.size}  Cards", style = AppTypography.titleSmall.copy(LightBlue))
                     }
                 }
             }
 
             Spacer(Modifier.height(18.dp))
 
-            CustomCard(
-                backgroundContent = {
-                    Image(
-                        painter = painterResource(R.drawable.card_bg),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+            when {
+                !state.cardError.isNullOrEmpty()-> {
+                    CustomCard(
+                        connectionIconTint = LightBlue.copy(alpha = 0.6f),
+                        middleContent = {
+                            Spacer(Modifier.height(5.dp))
+                            Text(
+                                text = state.cardError?:"",
+                                style = AppTypography.bodyLarge.copy(fontSize = 20.sp)
+                            )
+                        },
                     )
-                },
-                connectionIconTint = Color.White,
-                middleContent = {
-                    Text(
-                        text = "Priority Debit",
-                        style = AppTypography.bodyLarge.copy(fontSize = 20.sp)
-                    )
-                },
-                cardHeight = 175.dp,
-                header = "NEXUS INFINITE",
-                cardNumberLastDigits = "8842",
-                cardHolderName = "Menna Mostafa",
-                expiryDate = "12/28",
-                contentPadding = PaddingValues(horizontal = 18.dp, vertical = 14.dp),
-                headerColor = Color.White.copy(alpha = 0.75f),
-                bodyColor = Color.White,
-            )
+                }
 
-            Spacer(Modifier.height(40.dp))
+                state.card.isNotEmpty() -> {
+                    AddCarousel(state.card)
+                }
+            }
+
+            Spacer(Modifier.height(20.dp))
 
             Row(
                 Modifier.fillMaxWidth().clickable{
@@ -159,7 +168,7 @@ fun CardScreen(navController: NavController, userState: StateFlow<UserState>){
                 )
             }
 
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(20.dp))
 
             Text(
                 "CARD DETAILS",

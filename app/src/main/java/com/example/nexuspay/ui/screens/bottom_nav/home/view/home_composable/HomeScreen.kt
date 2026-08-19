@@ -44,16 +44,18 @@ import com.example.nexuspay.ui.screens.bottom_nav.home.viewmodel.UserState
 import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavController,
-    userState: StateFlow<UserState>,
-    transactionState: StateFlow<TransactionState>
 ){
-    val userState by userState.collectAsState()
-    val transactionState by transactionState.collectAsState()
+    val viewModel = koinInject<CommonViewModel>()
+    val userState by viewModel.userState.collectAsState()
+    val transactionState by viewModel.transactionState.collectAsState()
+
+    LaunchedEffect(Unit) { viewModel.loadData() }
 
     Column(Modifier.background(Color.Black.copy(0.9f)).fillMaxSize())
     {
