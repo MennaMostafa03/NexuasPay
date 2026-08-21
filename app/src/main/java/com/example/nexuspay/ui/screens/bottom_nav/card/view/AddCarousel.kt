@@ -64,7 +64,7 @@ fun AddCarousel(cards: List<CardEntity>) {
                     )
                 },
                 header = card.cardType,
-                cardNumberLastDigits = card.cardNumber.takeLast(4),
+                cardNumbers = "••••  ••••  •••• "+card.cardNumber.takeLast(4),
                 cardHolderName = card.cardName,
                 expiryDate = card.expireDate,
                 cardLogo = if (card.cardType == "Master Card") painterResource(R.drawable.masterlogo) else painterResource(R.drawable.visa)

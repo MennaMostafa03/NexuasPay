@@ -29,8 +29,8 @@ class TransactionLocalDataImpl(
         requestTransactionDao.deleteRequest(entity)
     }
 
-    override suspend fun getRequestByIdFromDB(transactionId: Int) : RequestEntity{
-        return requestTransactionDao.getRequestById(transactionId)
+    override suspend fun getRequestFromDB() : List<RequestEntity>{
+        return requestTransactionDao.getRequest()
     }
 
 }

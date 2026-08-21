@@ -49,12 +49,10 @@ class TransactionRepoImpl(
     }
 
     override suspend fun saveRequestRepo(entity: RequestEntity): TransactionResult {
-        val savedEntity =
-            localDB.saveRequestInDB(entity)
-        val result =
-            sendRequestRepo(savedEntity)
+        val savedEntity = localDB.saveRequestInDB(entity)
+        val result = sendRequestRepo(savedEntity)
         if (result == TransactionResult.Pending) {
-            scheduleManager.scheduleRetry(savedEntity.id!!)
+            scheduleManager.scheduleRetry()
         }
         return result
     }
@@ -73,8 +71,10 @@ class TransactionRepoImpl(
         }
     }
 
-    override suspend fun retrySendMoney(id: Int) : TransactionResult {
-        val entity =  localDB.getRequestByIdFromDB(id)
-        return  sendRequestRepo(entity)
+    override suspend fun retrySendMoney()  {
+        val pendingTransaction =  localDB.getRequestFromDB()
+        pendingTransaction.forEach { transaction ->
+            sendRequestRepo(transaction)
+        }
     }
 }

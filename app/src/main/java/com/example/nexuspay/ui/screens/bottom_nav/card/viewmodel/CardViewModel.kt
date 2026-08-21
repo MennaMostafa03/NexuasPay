@@ -1,7 +1,6 @@
 package com.example.nexuspay.ui.screens.bottom_nav.card.viewmodel
 
 import CardState
-import androidx.core.util.rangeTo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nexuspay.domain.model.response.CardEntity
@@ -51,13 +50,13 @@ class CardViewModel(
     }
 
     fun onCardNumberChange(newValue: String) {
+
         if(newValue.length <=16) {
             val cardType = when {
                 newValue.startsWith("4") -> "Visa Card"
                 newValue.startsWith("5") -> "Master Card"
                 else -> ""
             }
-
             _cardState.value = _cardState.value.copy(
                 cardEntity = _cardState.value.cardEntity.copy(
                     cardNumber = newValue,

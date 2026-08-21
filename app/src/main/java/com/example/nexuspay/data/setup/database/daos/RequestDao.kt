@@ -15,7 +15,7 @@ interface RequestDao {
     @Delete
     suspend fun deleteRequest(entity: RequestEntity)
 
-    @Query("Select * From RequestEntity where id == :transactionId")
-    suspend fun getRequestById(transactionId: Int) : RequestEntity
+    @Query("Select * From RequestEntity")
+    suspend fun getRequest() : List<RequestEntity>
 
 }

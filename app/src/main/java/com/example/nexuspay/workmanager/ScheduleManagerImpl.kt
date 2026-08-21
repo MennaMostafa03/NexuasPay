@@ -1,27 +1,26 @@
 package com.example.nexuspay.workmanager
 
 import android.content.Context
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.workDataOf
 import java.util.concurrent.TimeUnit
 
 class ScheduleManagerImpl(
    private val context: Context
 ) : ScheduleManager {
-    override fun scheduleRetry(id : Int) {
+    override fun scheduleRetry() {
 
-        val workRequest = OneTimeWorkRequestBuilder<TransactionWorker>()
-            .setInputData(
-                workDataOf(
-                    "transactionId" to id
-                )
-            )
-            .setInitialDelay(1, TimeUnit.MINUTES)
-            .build()
+        val workRequest = PeriodicWorkRequestBuilder<TransactionWorker>(
+            15,
+            TimeUnit.MINUTES
+        ).build()
 
         WorkManager.getInstance(context)
-            .enqueue(workRequest)
-
+            .enqueueUniquePeriodicWork(
+                "TransactionRetry",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
     }
 }

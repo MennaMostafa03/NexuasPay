@@ -40,10 +40,10 @@ fun CustomCard(
     connectionIconTint: Color,
     middleContent: @Composable () -> Unit,
     header: String= "",
-    cardNumberLastDigits: String? = "••••",
-    cardLogo: Painter? = null,
-    cardHolderName: String? = null,
-    expiryDate: String? = null,
+    cardNumbers: String = "",
+    cardLogo: Painter?= null,
+    cardHolderName: String = "",
+    expiryDate: String = "",
     )
 {
 
@@ -91,7 +91,7 @@ fun CustomCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if(header.isEmpty()) "NEXUS INFINITE" else header.uppercase() ,
+                        text = header.ifEmpty { "NEXUS INFINITE" }.uppercase() ,
                         style = AppTypography.titleSmall.copy(fontWeight = FontWeight.Bold),
                     )
 
@@ -110,7 +110,7 @@ fun CustomCard(
                 Spacer(Modifier.height(5.dp))
 
                 Text(
-                    text = "••••  ••••  ••••  ${cardNumberLastDigits ?: "••••"}",
+                    text = cardNumbers.ifEmpty { "••••  ••••  •••• ••••" } ,
                     style = AppTypography.bodyLarge.copy(
                         fontSize = 26.sp,
                         letterSpacing = 2.sp
@@ -134,7 +134,7 @@ fun CustomCard(
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = cardHolderName?.uppercase() ?: "YOUR NAME",
+                            text = cardHolderName.ifEmpty{"YOUR NAME"}.uppercase(),
                             style = AppTypography.bodyMedium.copy(fontSize = 14.sp),
                         )
                     }
@@ -149,7 +149,7 @@ fun CustomCard(
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = expiryDate ?: "MM/YY",
+                            text = expiryDate.ifEmpty { "MM/YY" },
                             style = AppTypography.bodyMedium.copy(fontSize = 14.sp),
                         )
                     }

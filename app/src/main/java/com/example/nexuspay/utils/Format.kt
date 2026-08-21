@@ -4,6 +4,9 @@ package com.example.nexuspay.utils
 
 
 import android.annotation.SuppressLint
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -58,4 +61,39 @@ fun formatExpiryDate(value: String): String {
     val year = parts[1]
 
     return String.format("%02d/%s", month, year)
+}
+
+
+fun formatCardNumber(value : String) : String {
+    return  value
+        .filter { it.isDigit() }
+        .take(16)
+        .chunked(4)
+        .joinToString(" ")
+}
+
+
+class CardNumberVisualTransformation : VisualTransformation {
+    override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText {
+        val trimmed = if (text.text.length >= 16) text.text.substring(0..15) else text.text
+        val formatted = trimmed.chunked(4).joinToString(" ")
+
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                val spaces = when {
+                    offset <= 4 -> 0
+                    offset <= 8 -> 1
+                    offset <= 12 -> 2
+                    else -> 3
+                }
+                return (offset + spaces).coerceAtMost(formatted.length)
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                return offset - (offset / 5).coerceAtMost(3)
+            }
+        }
+
+        return TransformedText(androidx.compose.ui.text.AnnotatedString(formatted), offsetMapping)
+    }
 }

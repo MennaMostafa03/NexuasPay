@@ -9,5 +9,5 @@ interface TransactionLocalData {
     suspend fun getTransactionFromDB() : List<TransactionResponse>
     suspend fun saveRequestInDB(transaction : RequestEntity) : RequestEntity
     suspend fun deleteRequestFromDB(entity: RequestEntity)
-    suspend fun getRequestByIdFromDB(transactionId: Int): RequestEntity
+    suspend fun getRequestFromDB(): List<RequestEntity>
 }

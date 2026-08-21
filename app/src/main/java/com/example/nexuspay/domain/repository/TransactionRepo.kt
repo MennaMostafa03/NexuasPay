@@ -10,5 +10,5 @@ interface TransactionRepo {
     suspend fun getAllUsersRepo() :  Result<List<CurrentUserItem>>
     suspend fun sendRequestRepo(entity: RequestEntity) : TransactionResult
     suspend fun saveRequestRepo(entity: RequestEntity) : TransactionResult
-    suspend fun retrySendMoney(id : Int) : TransactionResult
+    suspend fun retrySendMoney()
 }

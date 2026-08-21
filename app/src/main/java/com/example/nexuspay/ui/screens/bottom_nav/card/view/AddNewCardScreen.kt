@@ -54,6 +54,8 @@ import com.example.nexuspay.ui.theme.LightBlue
 import com.example.nexuspay.ui.theme.LightGray
 import com.example.nexuspay.ui.theme.Navy
 import com.example.nexuspay.ui.theme.White
+import com.example.nexuspay.utils.CardNumberVisualTransformation
+import com.example.nexuspay.utils.formatCardNumber
 import org.koin.compose.koinInject
 
 @Composable
@@ -65,7 +67,7 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
 
     LaunchedEffect(Unit)
     {
-        viewModel.message.collect { it ->
+        viewModel.message.collect {
             if (it.isEmpty()) {
                 viewModel.addCardDetails()
             }else {
@@ -134,7 +136,10 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
                             tint = LightBlue
                         )
                     },
-                    header = "NEXUS ELITE"
+                    header = "NEXUS ELITE",
+                    cardNumbers = formatCardNumber(state.cardEntity.cardNumber),
+                    cardHolderName = state.cardEntity.cardName,
+                    expiryDate = state.cardEntity.expireDate
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -153,7 +158,8 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
                         )
                     },
                     label = "Card Number",
-                    textColor = Black
+                    textColor = Black,
+                    visualTransformation = CardNumberVisualTransformation()
                 ) { viewModel.onCardNumberChange(it) }
 
                 Spacer(Modifier.height(16.dp))
@@ -172,7 +178,7 @@ fun AddNewCardScreen(navController: NavController, name: String?) {
                         )
                     },
                     label = "Cardholder Name",
-                    textColor = Black
+                    textColor = Black,
                 ) { viewModel.onCardNameChange(it) }
 
                 Spacer(Modifier.height(16.dp))

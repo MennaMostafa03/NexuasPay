@@ -61,7 +61,7 @@ class SendViewModel(
         }
         _state.value = _state.value.copy(inputValue = newValue)
         val amount = newValue.toDoubleOrNull()?.times(100)?.toInt() ?: 0
-        _state.value.entity = _state.value.entity.copy(amount = amount )
+        _state.value.entity = _state.value.entity.copy(amount = amount)
     }
 
     fun onRemoveClick() {
